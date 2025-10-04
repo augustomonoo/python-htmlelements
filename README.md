@@ -186,6 +186,17 @@ strings `'true'` and `'false'`.
 
 That said, any object that have `__str__` can be passed
 
+If you do no want to use keyword arguments a `dict` can be used instead:
+
+```python
+>>> from htmlelements.dynamic import P
+>>> attrs = {"class": "bg-white"}
+>>> str(P("Hello!", **attrs))
+'<p class="bg-white">Hello!</p>'
+```
+
+Using a dict this way allows you to use `class` and `for` directly.
+
 ## Building pages
 
 Here's a simple mockup: a home page that lists articles, a article page
