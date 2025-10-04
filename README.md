@@ -124,12 +124,12 @@ If you want to create a void element:
 ```
 
 Both Element and VoidElement are convenience classes. All they do is remove the
-need to pass the `void` keyword parameter to BaseElement
+need to pass the `_void` keyword parameter to BaseElement
 
 ```python
 >>> from htmlelements.element import BaseElement
 >>> class Img(BaseElement): ...
->>> str(Img("this is ignored", "also ignored"), src="img.png", void=True)
+>>> str(Img("this is ignored", "also ignored"), src="img.png", _void=True)
 '<img src="img.png">'
 ```
 
@@ -159,7 +159,7 @@ better to handle it before:
 Any keyword parameter passed to the elements are added as attributes, with
 some caveats:
 
-- `void` is used to control if the element should be a void element or not
+- `_void` is used to control if the element should be a void element or not
 - `classes` gets converted to the attribute `class`. This is done because
   `class` is a python keyword and as such can't be used as a parameter
 - `label_for` gets converted to the attribute `for`. Same reason as
