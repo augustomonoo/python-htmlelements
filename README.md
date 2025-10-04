@@ -6,7 +6,7 @@ I really enjoy working with [Django](https://djangoproject.com), but really disl
 
 I've used some JSX, and really liked it, but that meant going JS/TS.
 
-Then I saw FastHTML. Specifically, it's ft. And loved it.
+Then I saw FastHTML. Specifically, it's [ft components](https://fastht.ml/docs/explains/explaining_xt_components.html). And loved it.
 
 And tried using it within Django, and it worked fine! The only issue is
 pulling the entire FastHTML as a dependency, which is not very nice if
