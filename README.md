@@ -63,9 +63,8 @@ Render the element with `str`. Or just print it to the terminal.
 '<div class="div-class"><p class="p-class">Hello World</p></div>'
 ```
 
-Some elements are considered Void Element, as in: they do not have any child
-node.
-[https://developer.mozilla.org/en-US/docs/Glossary/Void_element]
+Some elements are considered [Void Element](https://developer.mozilla.org/en-US/docs/Glossary/Void_element),
+as in: they do not have any child node.
 
 These void elements are handled automatically by the dynamic import. Any
 non-keyword parameter will be ignored when instantiating a void element
@@ -76,9 +75,8 @@ non-keyword parameter will be ignored when instantiating a void element
 '<img>'
 ```
 
-Note that void elements are not self closing since self closing tags do not
-exists in HTML
-[https://developer.mozilla.org/en-US/docs/Glossary/Void_element#self-closing_tags]
+Note that void elements are not self closing since [self closing tags do not
+exists in HTML](https://developer.mozilla.org/en-US/docs/Glossary/Void_element#self-closing_tags)
 
 ## The utils module
 
