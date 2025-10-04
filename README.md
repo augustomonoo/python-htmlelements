@@ -199,7 +199,7 @@ Using a dict this way allows you to use `class` and `for` directly.
 
 ## Building pages
 
-Here's a simple mockup: a home page that lists articles, a article page
+Here's a simple mockup: a home page that lists articles, an article page
 that shows a single article and an about page. All three using a
 common template.
 
