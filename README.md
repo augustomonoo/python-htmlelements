@@ -187,8 +187,6 @@ fine, as well as any callable that returns a value with `__str__`.
 Exception for `True` and `False`. Those two values will be converted to the
 strings `'true'` and `'false'`.
 
-That said, any object that have `__str__` can be passed
-
 If you do no want to use keyword arguments a `dict` can be used instead:
 
 ```python
