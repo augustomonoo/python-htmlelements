@@ -135,8 +135,11 @@ need to pass the `_void` keyword parameter to BaseElement
 
 ## Element Children
 
-Any non-keyword parameter passed is added as a children. Any other element is
-acceptable, as well as any object that have `__str__` implemented
+Any non-keyword parameter passed is added as children.
+
+You can pass any object that has `__str__` implemented (
+and every Element have `__str__`) or any callable that returns something
+that has `__str__`.
 
 ```python
 >>> from htmlelements.dynamic import P, Span
@@ -166,7 +169,7 @@ some caveats:
   `classes/class`
 
 As for the values themselves, any object that have `__str__` implemented is
-fine, but be mindful of it's behavior.
+fine, as well as any callable that returns a value with `__str__`.
 
 ```python
 >>> from htmlelements.dynamic import P
