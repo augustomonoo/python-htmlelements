@@ -1,4 +1,49 @@
-from typing import Protocol
+from typing import Protocol, Any
+
+
+def render(value: Any):
+    """Returns the value as str.
+    If it's a callable, return the result as str
+
+    If it's a boolean, return "true" or "false" (note the lowercase)
+
+    Otherwise, just return the value as str
+    """
+    if hasattr(value, "__call__"):
+        return str(value())
+    if value in (True, False):
+        return str(value).lower()
+    return str(value)
+
+
+def parse_attribute_tag(attr: str):
+    """Handles edge cases for element attributes
+
+    Some attributes are keyword in python and will raise errors if attempted to be
+    use as named parameters.
+
+    The keywords "class" and "for" are some.
+
+    As such they have been created some special checks to convert:
+    classes => class
+    label_for => for
+
+    There may be more reserved keywords that have to be handled and
+    so this method will be updated to handle them.
+
+    If the attributes are passed from a dictionary expansion, eg **{'class': 'myclass'},
+    everything should still work fine
+
+    Additionaly, html element attributes use '-' to represent multi word
+    attributes, but you can't have things like 'aria-for' as named parameters.
+    Therefore the named parameter should be passed as 'aria_for' and this parser
+    will replace '_' with '-'.
+    """
+    if attr == "classes":
+        return "class"
+    if attr == "label_for":
+        return "for"
+    return attr.replace("_", "-")
 
 
 class Stringfiable(Protocol):
@@ -27,54 +72,9 @@ class BaseElement(Stringfiable):
         self.tag = self.__class__.__name__.lower()
         self._void = _void
         self.content = [] if self._void else content
-        self.other_attrs = {
-            self.parse_attr_tag(k): self.parse_attr_value(v)
-            for k, v in attributes.items()
-        }
+        self.other_attrs = {parse_attribute_tag(k): v for k, v in attributes.items()}
 
-    def parse_attr_tag(self, attr: str):
-        """Handles edge cases for element attributes
-
-        Some attributes are keyword in python and will raise errors if attempted to be
-        use as named parameters.
-
-        The keywords "class" and "for" are some.
-
-        As such they have been created some special checks to convert:
-        classes => class
-        label_for => for
-
-        There may be more reserved keywords that have to be handled and
-        so this method will be updated to handle them.
-
-        If the attributes are passed from a dictionary expansion, eg **{'class': 'myclass'},
-        everything should still work fine
-
-        Additionaly, html element attributes use '-' to represent multi word
-        attributes, but you can't have things like 'aria-for' as named parameters.
-        Therefore the named parameter should be passed as 'aria_for' and this parser
-        will replace '_' with '-'.
-        """
-        if attr == "classes":
-            return "class"
-        if attr == "label_for":
-            return "for"
-        return attr.replace("_", "-")
-
-    def parse_attr_value(self, value):
-        """Converts the passed value to a accepable value for html attributes
-
-        Right now it justs checks if the value is True or False and converts
-        it to "true" or "false" respectively.
-
-        Anything else is kept as is.
-        """
-
-        if value in (True, False):
-            return str(value).lower()
-        return value
-
-    def build_attrs(self):
+    def render_attributes(self):
         """Build a string containing all the tag and all of it's attributes.
 
         Does not include "<" and ">". For instance:
@@ -89,7 +89,7 @@ class BaseElement(Stringfiable):
         (maybe with f"<{obj.build_attrs()}>")
         """
         attrs = [self.tag] + [
-            f'{key}="{value}"' for key, value in self.other_attrs.items()
+            f'{key}="{render(value)}"' for key, value in self.other_attrs.items()
         ]
         return " ".join(attrs)
 
@@ -102,10 +102,10 @@ class BaseElement(Stringfiable):
         While a non void element will be
         <button id="myId" class="btn">Click</button>
         """
-        attrs = self.build_attrs()
+        attrs = self.render_attributes()
         if self._void:
             return f"<{attrs}>"
-        content = "".join(str(c) for c in self.content)
+        content = "".join(render(c) for c in self.content)
         return f"<{attrs}>{content}</{self.tag}>"
 
 
