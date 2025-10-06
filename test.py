@@ -1,8 +1,45 @@
 import unittest
 
-from htmlelements.element import BaseElement, Element, VoidElement
+from htmlelements.element import (
+    BaseElement,
+    Element,
+    VoidElement,
+    parse_attribute_tag,
+    render,
+)
 from htmlelements.utils import html
 from htmlelements.dynamic import get_element, make_element, VOID_ELEMENTS
+
+
+class TestRender(unittest.TestCase):
+    def test_str_should_not_change(self):
+        s = "hello"
+        self.assertEqual(s, render(s))
+
+    def test_should_return_callable_result_as_str(self):
+        def call_number():
+            return 123
+
+        def call_str():
+            return "a"
+
+        self.assertEqual(render(call_number), "123")
+        self.assertEqual(render(call_str), "a")
+
+    def test_should_return_bools_as_lowercase_str(self):
+        self.assertEqual(render(True), "true")
+        self.assertEqual(render(False), "false")
+
+
+class TestParseAttributeTag(unittest.TestCase):
+    def test_classes_to_class(self):
+        self.assertEqual(parse_attribute_tag("classes"), "class")
+
+    def test_label_for_to_label(self):
+        self.assertEqual(parse_attribute_tag("label_for"), "for")
+
+    def test_underscore_to_dash(self):
+        self.assertEqual(parse_attribute_tag("some_tag_attr"), "some-tag-attr")
 
 
 class TestBaseElement(unittest.TestCase):
@@ -44,6 +81,20 @@ class TestBaseElement(unittest.TestCase):
     def test_attribute_replace_underscores(self):
         el = BaseElement(hx_get="url")
         self.assertIn('hx-get="url"', str(el))
+
+    def test_callable_content(self):
+        def call():
+            return "hello"
+
+        el = BaseElement(call)
+        self.assertEqual(str(el), "<baseelement>hello</baseelement>")
+
+    def test_callalbe_attribute_value(self):
+        def call():
+            return "hello"
+
+        el = BaseElement(data_value=call)
+        self.assertEqual(str(el), '<baseelement data-value="hello"></baseelement>')
 
 
 class TestElement(unittest.TestCase):
