@@ -1,5 +1,5 @@
 import html
-from typing import Any, Callable
+from typing import Any, Callable, Literal
 
 
 class SafeStr(str):
@@ -36,7 +36,10 @@ def render(value: "AnyRenderable") -> str | SafeStr:
     return html.escape(str(value))
 
 
-def parse_attribute_tag(attr: str):
+TagNames = Literal["classes"] | Literal["label_for"] | str
+
+
+def parse_attribute_tag(attr: TagNames) -> str:
     """Handles edge cases for element attributes
 
     Some attributes are keyword in python and will raise errors if attempted to be
