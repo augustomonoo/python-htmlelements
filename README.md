@@ -44,7 +44,7 @@ is generated on-the-fly, just like FastHTML's `ft`.
 
 Instantiate the element. Any keyword argument passed will be added to the
 element attributes. Other arguments are passed as children for the element. If
-the element import is a void element, such as img, then anything passed as
+the element imported is a void element, such as img, then anything passed as
 child will be ignored.
 
 Render the element with `str`. Or just print it to the terminal.
@@ -137,9 +137,8 @@ need to pass the `_void` keyword parameter to BaseElement
 
 Any non-keyword parameter passed is added as children.
 
-You can pass any object that has `__str__` implemented (
-and every Element have `__str__`) or any callable that returns something
-that has `__str__`.
+You can pass any object that has `__str__` implemented (and every Element
+has `__str__`) or any callable that returns something that has `__str__`.
 
 ```python
 >>> from htmlelements.dynamic import P, Span
@@ -162,7 +161,9 @@ better to handle it before:
 Any keyword parameter passed to the elements are added as attributes, with
 some caveats:
 
-- `_void` is used to control if the element should be a void element or not
+- `_void` is used to control if the element should be a void element or not.
+  This is only applicable when using `BaseElement` directly. `Element`,
+  `VoidElement` and the dynamic import handle this parameter automatically
 - `classes` gets converted to the attribute `class`. This is done because
   `class` is a python keyword and as such can't be used as a parameter
 - `label_for` gets converted to the attribute `for`. Same reason as
@@ -327,7 +328,8 @@ So there are two utilities in the `htmlelements.django` module to help with that
 
 #### csrf_token
 
-Just a wrapper around `django.middleware.csrf.get_token` that returns a function. Use as a callable to produce de token only when needed.
+Just a wrapper around `django.middleware.csrf.get_token` that returns a
+function. Use as a callable to produce the token only when needed.
 
 ```python
 from django.http import HttpRequest, HttpResponse
