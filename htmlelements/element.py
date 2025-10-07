@@ -1,19 +1,39 @@
-from typing import Protocol, Any
+import html
+from typing import Any, Callable
 
 
-def render(value: Any):
-    """Returns the value as str.
-    If it's a callable, return the result as str
+class SafeStr(str):
+    """A str that is is not escaped by render.
 
-    If it's a boolean, return "true" or "false" (note the lowercase)
-
-    Otherwise, just return the value as str
+    All strings as escaped by default. However if you want to pass a string
+    that you trust and don't want it to be escaped, wrap it in a SafeStr.
     """
-    if hasattr(value, "__call__"):
-        return str(value())
-    if value in (True, False):
+
+    pass
+
+
+def render(value: "AnyRenderable") -> str | SafeStr:
+    """Returns the value as str.
+
+    If value is a Callable will call render on the result of the call.
+
+    If it's SafeStr it be returned as is
+
+    Booleans are returned as a lowercase str (True => 'true').
+
+    """
+    if callable(value):
+        return render(value())
+    if isinstance(value, SafeStr):
+        return value
+    if isinstance(value, bool):
         return str(value).lower()
-    return str(value)
+    if isinstance(value, BaseElement):
+        return str(value)
+    if isinstance(value, str):
+        return html.escape(value)
+    # Here value could be anything, call str on it and escape it
+    return html.escape(str(value))
 
 
 def parse_attribute_tag(attr: str):
@@ -46,11 +66,7 @@ def parse_attribute_tag(attr: str):
     return attr.replace("_", "-")
 
 
-class Stringfiable(Protocol):
-    def __str__(self) -> str: ...
-
-
-class BaseElement(Stringfiable):
+class BaseElement:
     """Class representing an HTML element.
 
     Render these objects to html strings by passing to str()
@@ -65,7 +81,7 @@ class BaseElement(Stringfiable):
 
     def __init__(
         self,
-        *content: Stringfiable,
+        *content: "AnyRenderable",
         _void=False,
         **attributes,
     ):
@@ -115,7 +131,7 @@ class Element(BaseElement):
     It's just a wrapper to remove the _void parameter from __init__
     """
 
-    def __init__(self, *content: Stringfiable, **attributes):
+    def __init__(self, *content: "AnyRenderable", **attributes):
         super().__init__(*content, _void=False, **attributes)
 
 
@@ -125,5 +141,10 @@ class VoidElement(BaseElement):
     Similar to Element, but this also ignores anything passed as content
     """
 
-    def __init__(self, *content: Stringfiable, **attributes):
+    def __init__(self, *content: "AnyRenderable", **attributes):
         super().__init__(_void=True, **attributes)
+
+
+Rendererable = str | SafeStr | bool | BaseElement | Any
+CallableRenderable = Callable[[], Rendererable]
+AnyRenderable = Rendererable | CallableRenderable

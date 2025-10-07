@@ -1,17 +1,36 @@
 import unittest
+from html import escape
 
+from htmlelements.dynamic import VOID_ELEMENTS, get_element, make_element
 from htmlelements.element import (
     BaseElement,
     Element,
+    SafeStr,
     VoidElement,
     parse_attribute_tag,
     render,
 )
 from htmlelements.utils import html
-from htmlelements.dynamic import get_element, make_element, VOID_ELEMENTS
+
+
+class DummyForTestRender:
+    def __str__(self):
+        return "<d>dummy</d>"
 
 
 class TestRender(unittest.TestCase):
+    def test_should_return_SafeStr_unescaped(self):
+        s = SafeStr("<d>123</d>")
+        self.assertEqual(render(s), s)
+
+    def test_should_escape_regular_str(self):
+        s = "<d>123</d>"
+        self.assertEqual(render(s), escape(s))
+
+    def test_should_escape_other_types(self):
+        d = DummyForTestRender()
+        self.assertEqual(render(d), escape(str(d)))
+
     def test_str_should_not_change(self):
         s = "hello"
         self.assertEqual(s, render(s))
