@@ -315,3 +315,72 @@ def view(request: HttpRequest):
   )
 
 ```
+
+### Django utilities
+
+Some things in Django are commonly handled by context processors and so
+depend on the template engine.
+
+One of those things is CSRF tokens.
+
+So there are two utilities in the `htmlelements.django` module to help with that.
+
+#### csrf_token
+
+Just a wrapper around `django.middleware.csrf.get_token` that returns a function. Use as a callable to produce de token only when needed.
+
+```python
+from django.http import HttpRequest, HttpResponse
+
+from htmlelements.django.csrf import csrf_token
+from htmlelements.dynamic import Body, Form, Head
+from htmlelements.utils import html
+
+
+def view(request: HttpRequest):
+    return HttpResponse(
+        html(
+            Head(),
+            Body(
+                Form(
+                    Input(
+                        type="hidden",
+                        value=csrf_token(request),
+                        name="csrfmiddlewaretoken",
+                    ),
+                    method="POST",
+                )
+            ),
+        )
+    )
+```
+
+#### csrf_input
+
+Given that you will most likely want to add the CSRF token as a hidden input, this
+does just that.
+
+The code above is equivalent to:
+
+```python
+from django.http import HttpRequest, HttpResponse
+
+from htmlelements.django.csrf import csrf_input
+from htmlelements.dynamic import Body, Form, Head
+from htmlelements.utils import html
+
+
+def view(request: HttpRequest):
+    return HttpResponse(
+        html(
+            Head(),
+            Body(
+                Form(
+                    csrf_input(request),
+                    method="POST",
+                )
+            ),
+        )
+    )
+
+```
