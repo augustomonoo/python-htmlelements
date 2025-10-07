@@ -83,7 +83,7 @@ class BaseElement:
         self,
         *content: "AnyRenderable",
         _void=False,
-        **attributes,
+        **attributes: "Attributes",
     ):
         self.tag = self.__class__.__name__.lower()
         self._void = _void
@@ -131,7 +131,7 @@ class Element(BaseElement):
     It's just a wrapper to remove the _void parameter from __init__
     """
 
-    def __init__(self, *content: "AnyRenderable", **attributes):
+    def __init__(self, *content: "AnyRenderable", **attributes: "Attributes"):
         super().__init__(*content, _void=False, **attributes)
 
 
@@ -141,10 +141,11 @@ class VoidElement(BaseElement):
     Similar to Element, but this also ignores anything passed as content
     """
 
-    def __init__(self, *content: "AnyRenderable", **attributes):
+    def __init__(self, *content: "AnyRenderable", **attributes: "Attributes"):
         super().__init__(_void=True, **attributes)
 
 
 Rendererable = str | SafeStr | bool | BaseElement | Any
 CallableRenderable = Callable[[], Rendererable]
 AnyRenderable = Rendererable | CallableRenderable
+Attributes = dict[str, AnyRenderable]
