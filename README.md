@@ -78,6 +78,27 @@ non-keyword parameter will be ignored when instantiating a void element
 Note that void elements are not self closing since [self closing tags do not
 exists in HTML](https://developer.mozilla.org/en-US/docs/Glossary/Void_element#self-closing_tags)
 
+## HTML Escaping
+
+Any value passed as attribute or child is escaped using Python's built-in
+[`html.escape`](https://docs.python.org/3/library/html.html#html.escape)
+
+Callables will have they return value passed back to the rendering function.
+
+If you want have a value not be escaped use `htmlelements.element.SafeStr`.
+It's just a wrapper for regular strings, but this is returned as is by
+the render function.
+
+```python
+>>> from htmlelements.element import SafeStr, render
+>>> escaped = "<p>sample</p>"
+>>> render(escaped)
+'&lt;p&gt;sample&lt;/p&gt;'
+>>> not_escaped = SafeStr(escaped)
+>>> render(not_escaped)
+'<p>sample</p>'
+```
+
 ## The utils module
 
 The utils module has just two things for now: `doctype` and a function `html`
