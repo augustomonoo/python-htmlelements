@@ -1,7 +1,6 @@
 import unittest
 from html import escape
 
-from htmlelements.dynamic import VOID_ELEMENTS, get_element, make_element
 from htmlelements.element import (
     BaseElement,
     Element,
@@ -130,50 +129,6 @@ class TestVoidElement(unittest.TestCase):
     def test_should_be_void(self):
         el = VoidElement()
         self.assertTrue(el._void)
-
-
-class TestMakeELement(unittest.TestCase):
-    def test_make_element(self):
-        Div = make_element("Div", Element)
-        self.assertTrue(issubclass(Div, Element))
-
-    def test_make_void_element(self):
-        Img = make_element("Img", VoidElement)
-        self.assertTrue(issubclass(Img, VoidElement))
-
-    def test_should_cache_created_classes(self):
-        Div1 = make_element("Div", Element)
-        Div2 = make_element("Div", Element)
-        self.assertIs(Div1, Div2)
-
-    def test_created_element_should_be_named(self):
-        name = "div"
-        Div = make_element(name, Element)
-        self.assertEqual(Div.__name__, name.capitalize())
-
-
-class TestGetElement(unittest.TestCase):
-    def test_should_return_void_element(self):
-        for element in VOID_ELEMENTS:
-            el = get_element(element)
-            self.assertTrue(issubclass(el, VoidElement))
-
-    def test_should_return_element(self):
-        Div = get_element("div")
-        self.assertTrue(issubclass(Div, Element))
-
-
-class TestDynamicImport(unittest.TestCase):
-
-    def test_element(self):
-        from htmlelements.dynamic import Div
-
-        self.assertTrue(issubclass(Div, Element))
-
-    def test_void_element(self):
-        from htmlelements.dynamic import Img
-
-        self.assertTrue(issubclass(Img, VoidElement))
 
 
 class TestUtils(unittest.TestCase):

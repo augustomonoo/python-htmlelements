@@ -1,4 +1,4 @@
-from .dynamic import Html
+from . import Html
 
 doctype = "<!doctype html>"
 

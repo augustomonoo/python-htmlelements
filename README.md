@@ -2,16 +2,15 @@
 
 Create HTML using python code. Inspired by [FastHTML](https://fastht.ml/).
 
-I really enjoy working with [Django](https://djangoproject.com), but really dislike the templating.
+I really enjoy working with [Django](https://djangoproject.com), but really
+dislike the templating.
 
 I've used some JSX, and really liked it, but that meant going JS/TS.
 
 Then I saw FastHTML. Specifically, it's [ft components](https://fastht.ml/docs/explains/explaining_xt_components.html). And loved it.
 
 And tried using it within Django, and it worked fine! The only issue is
-pulling the entire FastHTML as a dependency, which is not very nice if
-you want to keep your dependencies to a minimal (which is something you
-should attempt).
+pulling the entire FastHTML as a dependency, which is not very nice.
 
 So I decided to write something very similar, just focused on generating
 HTML.
@@ -19,7 +18,7 @@ HTML.
 And here it is:
 
 ```python
->>> from htmlelements.dynamic import Head, Title, Body, H1
+>>> from htmlelements import Head, Title, Body, H1
 >>> from htmlelements.utils import html
 
 >>> html(
@@ -33,14 +32,9 @@ And here it is:
 Very simple (most of the lines in the python module are comments). Should
 also be very easy to modify if any specific functionality is needed.
 
-Also brought in the dynamic creating of the elements through the import, just
-like FastHTML (those imported classes do not exist, they are created as you
-import them). Because that is very neat.
-
 ## Quick start
 
-Import the element you want from `htmlelements.dynamic`. The imported element
-is generated on-the-fly, just like FastHTML's `ft`.
+Import the element you want from `htmlelements`.
 
 Instantiate the element. Any keyword argument passed will be added to the
 element attributes. Other arguments are passed as children for the element. If
@@ -51,7 +45,7 @@ Render the element with `str`. Or just print it to the terminal.
 
 ```python
 
->>> from htmlelements.dynamic import Div, P
+>>> from htmlelements import Div, P
 
 >>> str(Div(
   P(
@@ -66,11 +60,11 @@ Render the element with `str`. Or just print it to the terminal.
 Some elements are considered [Void Element](https://developer.mozilla.org/en-US/docs/Glossary/Void_element),
 as in: they do not have any child node.
 
-These void elements are handled automatically by the dynamic import. Any
-non-keyword parameter will be ignored when instantiating a void element
+These void elements are subclasses of `VoidElement`. Any
+non-keyword parameter will be ignored when instantiating them
 
 ```python
->>> from htmlelements.dynamic import Img, P
+>>> from htmlelements import Img, P
 >>> str(Img(P("This will be ignored")))
 '<img>'
 ```
@@ -162,7 +156,7 @@ You can pass any object that has `__str__` implemented (and every Element
 has `__str__`) or any callable that returns something that has `__str__`.
 
 ```python
->>> from htmlelements.dynamic import P, Span
+>>> from htmlelements import P, Span
 >>> str(P("Hello", "World", 1.0 ,Span('SpanSpam')))
 '<p>HelloWorld1.0<span>SpanSpam</span></p>'
 ```
@@ -171,7 +165,7 @@ Note that the `'Hello'`, `'World` and `1.0` have no space between them. So it's
 better to handle it before:
 
 ```python
->>> from htmlelements.dynamic import P, Span
+>>> from htmlelements import P, Span
 >>> s = " ".join(["Hello", "World", str(1.0)])
 >>> str(P(s,Span('SpanSpam')))
 '<p>Hello World 1.0<span>SpanSpam</span></p>'
@@ -183,8 +177,8 @@ Any keyword parameter passed to the elements are added as attributes, with
 some caveats:
 
 - `_void` is used to control if the element should be a void element or not.
-  This is only applicable when using `BaseElement` directly. `Element`,
-  `VoidElement` and the dynamic import handle this parameter automatically
+  This is only applicable when using `BaseElement` directly. `Element` and
+  `VoidElement` import handle this parameter automatically
 - `classes` gets converted to the attribute `class`. This is done because
   `class` is a python keyword and as such can't be used as a parameter
 - `label_for` gets converted to the attribute `for`. Same reason as
@@ -194,14 +188,14 @@ As for the values themselves, any object that have `__str__` implemented is
 fine, as well as any callable that returns a value with `__str__`.
 
 ```python
->>> from htmlelements.dynamic import P
+>>> from htmlelements import P
 >>> l = [1, 2]
 >>> str(P("Hello!", classes=l)
 '<p class="[1, 2]">Hello!</p>'
 ```
 
 ```python
->>> from htmlelements.dynamic import Img, P
+>>> from htmlelements import Img, P
 >>> str(Div("Hello!"), classes="font-bold bg-white text-black")
 '<div class="font-bold bg-white text-black">Hello</div>'
 ```
@@ -212,7 +206,7 @@ strings `'true'` and `'false'`.
 If you do no want to use keyword arguments a `dict` can be used instead:
 
 ```python
->>> from htmlelements.dynamic import P
+>>> from htmlelements import P
 >>> attrs = {"class": "bg-white"}
 >>> str(P("Hello!", **attrs))
 '<p class="bg-white">Hello!</p>'
@@ -230,7 +224,7 @@ common template.
 
 from typing import NamedTuple
 
-from htmlelements.dynamic import H1, H2, A, Body, Div, Head, P, Title
+from htmlelements import H1, H2, A, Body, Div, Head, P, Title
 from htmlelements.utils import html
 
 
@@ -308,7 +302,7 @@ template with just `{{ var }}`
 ```
 
 ```python
-from htmlelements.dynamic import P
+from htmlelements import P
 from django.shortcuts import render
 from django.http import HttpRequest
 
@@ -323,7 +317,7 @@ def view(request: HttpRequest):
 
 ```python
 from htmlelements.utils import html
-from htmlelements.dynamic import P, Head, Body
+from htmlelements import P, Head, Body
 from django.http import HttpRequest, HttpResponse
 
 def view(request: HttpRequest):
@@ -355,8 +349,8 @@ function. Use as a callable to produce the token only when needed.
 ```python
 from django.http import HttpRequest, HttpResponse
 
+from htmlelements import Body, Form, Head
 from htmlelements.django.csrf import csrf_token
-from htmlelements.dynamic import Body, Form, Head
 from htmlelements.utils import html
 
 
@@ -389,7 +383,7 @@ The code above is equivalent to:
 from django.http import HttpRequest, HttpResponse
 
 from htmlelements.django.csrf import csrf_input
-from htmlelements.dynamic import Body, Form, Head
+from htmlelements import Body, Form, Head
 from htmlelements.utils import html
 
 

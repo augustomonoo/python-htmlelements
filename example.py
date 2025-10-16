@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from htmlelements.dynamic import H1, H2, A, Body, Div, Head, P, Title
+from htmlelements import H1, H2, A, Body, Div, Head, P, Title
 from htmlelements.utils import html
 
 

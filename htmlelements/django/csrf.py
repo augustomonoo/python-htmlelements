@@ -1,6 +1,7 @@
-from django.middleware.csrf import get_token
-from htmlelements.dynamic import Input
 from django.http import HttpRequest
+from django.middleware.csrf import get_token
+
+from htmlelements import Input
 
 
 def csrf_token(request: HttpRequest):
