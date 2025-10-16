@@ -1,5 +1,5 @@
 import html
-from typing import Any, Callable, Literal
+from typing import Any, Callable, Iterable, Literal
 
 
 class SafeStr(str):
@@ -32,6 +32,11 @@ def render(value: "AnyRenderable") -> str | SafeStr:
         return str(value)
     if isinstance(value, str):
         return html.escape(value)
+    try:
+        iter(value)
+        return " ".join(render(v) for v in value)
+    except TypeError:
+        pass
     # Here value could be anything, call str on it and escape it
     return html.escape(str(value))
 
@@ -148,6 +153,6 @@ class VoidElement(BaseElement):
         super().__init__(_void=True, **attributes)
 
 
-Rendererable = str | SafeStr | bool | BaseElement | Any
+Rendererable = str | SafeStr | bool | BaseElement | Iterable | Any
 CallableRenderable = Callable[[], Rendererable]
 AnyRenderable = Rendererable | CallableRenderable

@@ -49,6 +49,10 @@ class TestRender(unittest.TestCase):
         self.assertEqual(render(True), "true")
         self.assertEqual(render(False), "false")
 
+    def test_iterables_should_joined_with_spaces(self):
+        v = ["class1", "class2"]
+        self.assertEqual(render(v), "class1 class2")
+
 
 class TestParseAttributeTag(unittest.TestCase):
     def test_classes_to_class(self):
