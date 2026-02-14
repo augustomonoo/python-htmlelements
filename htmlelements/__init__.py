@@ -365,6 +365,9 @@ class Title(Element): ...
 class Tr(Element): ...
 
 
+@deprecated(
+    "This feature is no longer recommended. Consider a Span with font-family monospace"
+)
 class Tt(Element): ...
 
 
