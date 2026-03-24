@@ -105,7 +105,7 @@ class TestBaseElement(unittest.TestCase):
         el = BaseElement(call)
         self.assertEqual(str(el), "<baseelement>hello</baseelement>")
 
-    def test_callalbe_attribute_value(self):
+    def test_callable_attribute_value(self):
         def call():
             return "hello"
 
