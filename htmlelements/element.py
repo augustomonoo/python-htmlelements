@@ -6,7 +6,7 @@ camel_case_regex = re.compile(r"([a-z])([A-Z])")
 
 
 class SafeStr(str):
-    """A str that is is not escaped by render.
+    """A str that is not escaped by render.
 
     All strings as escaped by default. However if you want to pass a string
     that you trust and don't want it to be escaped, wrap it in a SafeStr.
@@ -141,6 +141,6 @@ class VoidElement(BaseElement):
         super().__init__(_void=True, **attributes)
 
 
-Rendererable = str | SafeStr | bool | BaseElement | Iterable | Any
-CallableRenderable = Callable[[], Rendererable]
-AnyRenderable = Rendererable | CallableRenderable
+Renderable = str | SafeStr | bool | BaseElement | Iterable | Any
+CallableRenderable = Callable[[], Renderable]
+AnyRenderable = Renderable | CallableRenderable
