@@ -23,7 +23,7 @@ And here it is:
 
 >>> html(
   Head(Title("My Title")),
-  Body(H1("My Heading", classes="h1")),
+  Body(H1("My Heading", class_="h1")),
   )
 '<!doctype html><html><head><title>My Title</title></head><body><h1 class="h1">My Heading</h1></body></html>'
 
@@ -50,9 +50,9 @@ Render the element with `str`. Or just print it to the terminal.
 >>> str(Div(
   P(
     "Hello World",
-    classes="p-classes",
+    class_="p-classes",
     ),
-  classes="div-class",
+  class_="div-class",
 ))
 '<div class="div-class"><p class="p-class">Hello World</p></div>'
 ```
@@ -77,7 +77,7 @@ exists in HTML](https://developer.mozilla.org/en-US/docs/Glossary/Void_element#s
 Any value passed as attribute or child is escaped using Python's built-in
 [`html.escape`](https://docs.python.org/3/library/html.html#html.escape)
 
-Callables will have they return value passed back to the rendering function.
+Callables will have their return value passed back to the rendering function.
 
 If you want have a value not be escaped use `htmlelements.element.SafeStr`.
 It's just a wrapper for regular strings, but this is returned as is by
@@ -85,11 +85,10 @@ the render function.
 
 ```python
 >>> from htmlelements.element import SafeStr, render
->>> escaped = "<p>sample</p>"
->>> render(escaped)
+>>> sample= "<p>sample</p>"
+>>> render(sample)
 '&lt;p&gt;sample&lt;/p&gt;'
->>> not_escaped = SafeStr(escaped)
->>> render(not_escaped)
+>>> render(SafeStr(sample))
 '<p>sample</p>'
 ```
 
@@ -148,6 +147,9 @@ need to pass the `_void` keyword parameter to BaseElement
 '<img src="img.png">'
 ```
 
+That said, a bunch of elements are already available for importing, so no need
+to create your own Img class if you don't need any special behaviour
+
 ## Element Children
 
 Any non-keyword parameter passed is added as children.
@@ -161,7 +163,7 @@ has `__str__`) or any callable that returns something that has `__str__`.
 '<p>HelloWorld1.0<span>SpanSpam</span></p>'
 ```
 
-Note that the `'Hello'`, `'World` and `1.0` have no space between them. So it's
+Note that the `'Hello'`, `'World'` and `1.0` have no space between them. So it's
 better to handle it before:
 
 ```python
@@ -179,10 +181,8 @@ some caveats:
 - `_void` is used to control if the element should be a void element or not.
   This is only applicable when using `BaseElement` directly. `Element` and
   `VoidElement` import handle this parameter automatically
-- `classes` gets converted to the attribute `class`. This is done because
-  `class` is a python keyword and as such can't be used as a parameter
-- `label_for` gets converted to the attribute `for`. Same reason as
-  `classes/class`
+- Some attributes are reserved keywords in python. So add an underscore
+  at the end, like `class_`. Or you may want to use a dict expansion
 
 As for the values themselves, any object that have `__str__` implemented is
 fine, as well as any callable that returns a value with `__str__`.
@@ -190,18 +190,21 @@ fine, as well as any callable that returns a value with `__str__`.
 ```python
 >>> from htmlelements import P
 >>> l = [1, 2]
->>> str(P("Hello!", classes=l)
+>>> str(P("Hello!", class_=l)
+'<p class="[1, 2]">Hello!</p>'
+>>> str(P("Hello!", **{"class": l})
 '<p class="[1, 2]">Hello!</p>'
 ```
 
 ```python
 >>> from htmlelements import Img, P
->>> str(Div("Hello!"), classes="font-bold bg-white text-black")
+>>> str(Div("Hello!"), class_="font-bold bg-white text-black")
 '<div class="font-bold bg-white text-black">Hello</div>'
 ```
 
 Exception for `True` and `False`. Those two values will be converted to the
-strings `'true'` and `'false'`.
+strings `'true'` and `'false'` (note the lowercase there). If you need them
+to remain uppercase turn them into strings before.
 
 If you do no want to use keyword arguments a `dict` can be used instead:
 
@@ -212,7 +215,8 @@ If you do no want to use keyword arguments a `dict` can be used instead:
 '<p class="bg-white">Hello!</p>'
 ```
 
-Using a dict this way allows you to use `class` and `for` directly.
+Using a dict this way allows you to use any python reserved keyword without
+appending an underscore at the end.
 
 ## Building pages
 
@@ -223,6 +227,7 @@ common template.
 ```python
 
 from typing import NamedTuple
+from functools import cache
 
 from htmlelements import H1, H2, A, Body, Div, Head, P, Title
 from htmlelements.utils import html
@@ -251,10 +256,10 @@ def template(*content, page_title=""):
         Head(Title(page_title or "A HTML Page")),
         Body(
             Div("Maybe the site navigation goes here"),
-            H1("Welcome to this site!", classes="text-lg"),
+            H1("Welcome to this site!", class_="text-lg"),
             Div(
                 *content,
-                classes="mx-auto",
+                class_="mx-auto",
             ),
         ),
     )
@@ -275,6 +280,7 @@ def home():
     )
 
 
+@cache
 def about():
     return template(
         P("Made with python!"),
@@ -285,6 +291,10 @@ print(home())
 print(article(1))
 print(about())
 ```
+
+See the @cache? Use it to avoid generating anything that won't change and/or
+are used with frequency! Just be careful when caching dynamic pages or you may
+end up serving stale data or, worse, leaking data.
 
 ## Using with Django
 
@@ -320,7 +330,7 @@ from htmlelements.utils import html
 from htmlelements import P, Head, Body
 from django.http import HttpRequest, HttpResponse
 
-def view(request: HttpRequest):
+def view(request: HttpRequest) -> HttpResponse:
   return HttpResponse(
     html(
       Head(),
@@ -331,6 +341,10 @@ def view(request: HttpRequest):
   )
 
 ```
+
+Now if you want to use any Django template tag you will have to import them
+and use them just like functions. Simple tags/filters are easy to use. Block
+tags may pose more of a challenge.
 
 ### Django utilities
 
@@ -345,6 +359,8 @@ So there are two utilities in the `htmlelements.django` module to help with that
 
 Just a wrapper around `django.middleware.csrf.get_token` that returns a
 function. Use as a callable to produce the token only when needed.
+
+This will required you to pass a HttpRequest object.
 
 ```python
 from django.http import HttpRequest, HttpResponse
@@ -376,6 +392,8 @@ def view(request: HttpRequest):
 
 Given that you will most likely want to add the CSRF token as a hidden input, this
 does just that.
+
+Just like the csrf_token this will required the HttpRequest object.
 
 The code above is equivalent to:
 
