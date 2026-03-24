@@ -1,3 +1,4 @@
+from functools import cache
 from typing import NamedTuple
 
 from htmlelements import H1, H2, A, Body, Div, Head, P, Title
@@ -29,10 +30,10 @@ def template(*content, page_title=""):
         Head(Title(page_title or "A HTML Page")),
         Body(
             Div("Maybe the site navigation goes here"),
-            H1("Welcome to this site!", classes="text-lg"),
+            H1("Welcome to this site!", class_="text-lg"),
             Div(
                 *content,
-                classes="mx-auto",
+                class_="mx-auto",
             ),
         ),
     )
@@ -55,6 +56,7 @@ def home():
     )
 
 
+@cache
 def about():
     return template(
         P("Made with python!"),
