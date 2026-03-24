@@ -47,31 +47,14 @@ TagNames = Literal["classes"] | Literal["label_for"] | str
 def parse_attribute_tag(attr: TagNames) -> str:
     """Handles edge cases for element attributes
 
-    Some attributes are keyword in python and will raise errors if attempted to be
-    use as named parameters.
+    Underscores are replaced with dashes. Trailing dashes are removed.
 
-    The keywords "class" and "for" are some.
-
-    As such they have been created some special checks to convert:
-    classes => class
-    label_for => for
-
-    There may be more reserved keywords that have to be handled and
-    so this method will be updated to handle them.
-
-    If the attributes are passed from a dictionary expansion, eg **{'class': 'myclass'},
-    everything should still work fine
-
-    Additionaly, html element attributes use '-' to represent multi word
-    attributes, but you can't have things like 'aria-for' as named parameters.
-    Therefore the named parameter should be passed as 'aria_for' and this parser
-    will replace '_' with '-'.
+    Since some attributes are reserved keywords in python you will have to pass them in
+    one of two ways:
+    - Add an underscore to the end of the word. Eg: class_="value"
+    - Use a dictionary expansion. Eg: **{"class": "value"}
     """
-    if attr == "classes":
-        return "class"
-    if attr == "label_for":
-        return "for"
-    return attr.replace("_", "-")
+    return attr.replace("_", "-").rstrip("-")
 
 
 class BaseElement:

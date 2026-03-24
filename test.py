@@ -54,14 +54,13 @@ class TestRender(unittest.TestCase):
 
 
 class TestParseAttributeTag(unittest.TestCase):
-    def test_classes_to_class(self):
-        self.assertEqual(parse_attribute_tag("classes"), "class")
-
-    def test_label_for_to_label(self):
-        self.assertEqual(parse_attribute_tag("label_for"), "for")
 
     def test_underscore_to_dash(self):
         self.assertEqual(parse_attribute_tag("some_tag_attr"), "some-tag-attr")
+
+    def test_trailing_dashes_are_removed(self):
+        self.assertEqual(parse_attribute_tag("class_"), "class")
+        self.assertEqual(parse_attribute_tag("class__"), "class")
 
 
 class TestBaseElement(unittest.TestCase):
@@ -74,7 +73,7 @@ class TestBaseElement(unittest.TestCase):
         self.assertEqual(str(el), "<baseelement>Hello, World!</baseelement>")
 
     def test_base_element_with_attributes(self):
-        el = BaseElement(id="myId", classes="myClass", hx_get="endpoint")
+        el = BaseElement(id="myId", class_="myClass", hx_get="endpoint")
         self.assertEqual(
             str(el),
             '<baseelement id="myId" class="myClass" hx-get="endpoint"></baseelement>',
@@ -89,16 +88,8 @@ class TestBaseElement(unittest.TestCase):
         self.assertEqual(str(el), "<baseelement>")
 
     def test_base_element_void_with_attributes(self):
-        el = BaseElement(_void=True, id="voidId", classes="voidClass")
+        el = BaseElement(_void=True, id="voidId", class_="voidClass")
         self.assertEqual(str(el), '<baseelement id="voidId" class="voidClass">')
-
-    def test_attribute_classes(self):
-        el = BaseElement(classes="class1 class2")
-        self.assertIn('class="class1 class2"', str(el))
-
-    def test_attribute_label_for(self):
-        el = BaseElement(label_for="inputId")
-        self.assertIn('for="inputId"', str(el))
 
     def test_attribute_replace_underscores(self):
         el = BaseElement(hx_get="url")
