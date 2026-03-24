@@ -1,10 +1,11 @@
+from typing import Callable
 from django.http import HttpRequest
 from django.middleware.csrf import get_token
 
 from htmlelements import Input
 
 
-def csrf_token(request: HttpRequest):
+def csrf_token(request: HttpRequest) -> Callable[[], str]:
     """Wrapper for django's get_token.
 
     Returns a callable so that the token can be obtained only when necessary
@@ -13,7 +14,7 @@ def csrf_token(request: HttpRequest):
     def csrf():
         return get_token(request)
 
-    return csrf()
+    return csrf
 
 
 def csrf_input(request: HttpRequest, type="hidden", name="csrfmiddlewaretoken"):
