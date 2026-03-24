@@ -62,6 +62,9 @@ class TestParseAttributeTag(unittest.TestCase):
         self.assertEqual(parse_attribute_tag("class_"), "class")
         self.assertEqual(parse_attribute_tag("class__"), "class")
 
+    def test_camel_case_to_dash(self):
+        self.assertEqual(parse_attribute_tag("MyAttr"), "my-attr")
+
 
 class TestBaseElement(unittest.TestCase):
     def test_base_element_empty(self):

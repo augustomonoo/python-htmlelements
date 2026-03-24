@@ -1,5 +1,8 @@
 import html
-from typing import Any, Callable, Iterable, Literal
+import re
+from typing import Any, Callable, Iterable
+
+camel_case_regex = re.compile(r"([a-z])([A-Z])")
 
 
 class SafeStr(str):
@@ -44,6 +47,9 @@ def render(value: "AnyRenderable") -> str | SafeStr:
 def parse_attribute_tag(attr: str) -> str:
     """Handles edge cases for element attributes
 
+    Any str is converted to lower case.
+    If the string is in camelCase/CamelCase it will be converted to snake_case before. Eg: MyAttr go my-attr
+
     Underscores are replaced with dashes. Trailing dashes are removed.
 
     Since some attributes are reserved keywords in python you will have to pass them in
@@ -51,7 +57,9 @@ def parse_attribute_tag(attr: str) -> str:
     - Add an underscore to the end of the word. Eg: class_="value"
     - Use a dictionary expansion. Eg: **{"class": "value"}
     """
-    return attr.replace("_", "-").rstrip("-")
+    return (
+        camel_case_regex.sub(r"\g<1>_\g<2>", attr).lower().replace("_", "-").rstrip("-")
+    )
 
 
 class BaseElement:
