@@ -41,10 +41,7 @@ def render(value: "AnyRenderable") -> str | SafeStr:
     return html.escape(str(value))
 
 
-TagNames = Literal["classes"] | Literal["label_for"] | str
-
-
-def parse_attribute_tag(attr: TagNames) -> str:
+def parse_attribute_tag(attr: str) -> str:
     """Handles edge cases for element attributes
 
     Underscores are replaced with dashes. Trailing dashes are removed.
