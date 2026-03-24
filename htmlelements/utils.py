@@ -3,7 +3,7 @@ from . import Html
 doctype = "<!doctype html>"
 
 
-def html(*contents, **atributes):
+def html(*contents, **attributes):
     """Renders all passed content inside a Html element.
 
     Also inserts a doctype tag at the start of the rendered string
@@ -11,4 +11,4 @@ def html(*contents, **atributes):
     >>> html()
     <!doctype html><html></html>
     """
-    return doctype + str(Html(*contents, **atributes))
+    return doctype + str(Html(*contents, **attributes))
