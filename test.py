@@ -69,30 +69,30 @@ class TestParseAttributeTag(unittest.TestCase):
 class TestBaseElement(unittest.TestCase):
     def test_base_element_empty(self):
         el = BaseElement()
-        self.assertEqual(str(el), "<baseelement></baseelement>")
+        self.assertEqual(str(el), "<base-element></base-element>")
 
     def test_base_element_with_content(self):
         el = BaseElement("Hello, World!")
-        self.assertEqual(str(el), "<baseelement>Hello, World!</baseelement>")
+        self.assertEqual(str(el), "<base-element>Hello, World!</base-element>")
 
     def test_base_element_with_attributes(self):
         el = BaseElement(id="myId", class_="myClass", hx_get="endpoint")
         self.assertEqual(
             str(el),
-            '<baseelement id="myId" class="myClass" hx-get="endpoint"></baseelement>',
+            '<base-element id="myId" class="myClass" hx-get="endpoint"></base-element>',
         )
 
     def test_base_element_void(self):
         el = BaseElement(_void=True, src="image.png", alt="An image")
-        self.assertEqual(str(el), '<baseelement src="image.png" alt="An image">')
+        self.assertEqual(str(el), '<base-element src="image.png" alt="An image">')
 
     def test_base_element_void_with_content(self):
         el = BaseElement("This should be ignored", _void=True)
-        self.assertEqual(str(el), "<baseelement>")
+        self.assertEqual(str(el), "<base-element>")
 
     def test_base_element_void_with_attributes(self):
         el = BaseElement(_void=True, id="voidId", class_="voidClass")
-        self.assertEqual(str(el), '<baseelement id="voidId" class="voidClass">')
+        self.assertEqual(str(el), '<base-element id="voidId" class="voidClass">')
 
     def test_attribute_replace_underscores(self):
         el = BaseElement(hx_get="url")
@@ -103,14 +103,14 @@ class TestBaseElement(unittest.TestCase):
             return "hello"
 
         el = BaseElement(call)
-        self.assertEqual(str(el), "<baseelement>hello</baseelement>")
+        self.assertEqual(str(el), "<base-element>hello</base-element>")
 
     def test_callable_attribute_value(self):
         def call():
             return "hello"
 
         el = BaseElement(data_value=call)
-        self.assertEqual(str(el), '<baseelement data-value="hello"></baseelement>')
+        self.assertEqual(str(el), '<base-element data-value="hello"></base-element>')
 
 
 class TestElement(unittest.TestCase):

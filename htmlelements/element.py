@@ -81,7 +81,7 @@ class BaseElement:
         _void=False,
         **attributes: "AnyRenderable",
     ):
-        self.tag = self.__class__.__name__.lower()
+        self.tag = parse_attribute_tag(self.__class__.__name__)
         self._void = _void
         self.content = [] if self._void else content
         self.other_attrs = {parse_attribute_tag(k): v for k, v in attributes.items()}
