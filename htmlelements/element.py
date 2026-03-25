@@ -20,7 +20,7 @@ def render(value: "AnyRenderable") -> str | SafeStr:
 
     If value is a Callable will call render on the result of the call.
 
-    If it's SafeStr it be returned as is
+    If it's SafeStr it will be returned as is
 
     Booleans are returned as a lowercase str (True => 'true').
 
@@ -71,7 +71,7 @@ class BaseElement:
     class, since class is a python keyword. Other attributes are set on the
     other_attrs property.
 
-    A Element may be void, in which case it will ommit the closing that
+    An Element may be void, in which case it will omit the closing tag
     and any content that it may be holding.
     """
 
