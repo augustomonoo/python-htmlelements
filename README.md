@@ -9,7 +9,7 @@ I've used some JSX, and really liked it, but that meant going JS/TS.
 
 Then I saw FastHTML. Specifically, it's [ft components](https://fastht.ml/docs/explains/explaining_xt_components.html). And loved it.
 
-And tried using it within Django, and it worked fine! The only issue is
+And tried using it within `Django`, and it worked fine! The only issue is
 pulling the entire FastHTML as a dependency, which is not very nice.
 
 So I decided to write something very similar, just focused on generating
@@ -44,9 +44,7 @@ child will be ignored.
 Render the element with `str`. Or just print it to the terminal.
 
 ```python
-
 >>> from htmlelements import Div, P
-
 >>> str(Div(
   P(
     "Hello World",
@@ -54,7 +52,7 @@ Render the element with `str`. Or just print it to the terminal.
     ),
   class_="div-class",
 ))
-'<div class="div-class"><p class="p-class">Hello World</p></div>'
+'<div class="div-class"><p class="p-classes">Hello World</p></div>'
 ```
 
 Some elements are considered [Void Element](https://developer.mozilla.org/en-US/docs/Glossary/Void_element),
@@ -77,11 +75,11 @@ exists in HTML](https://developer.mozilla.org/en-US/docs/Glossary/Void_element#s
 Any value passed as attribute or child is escaped using Python's built-in
 [`html.escape`](https://docs.python.org/3/library/html.html#html.escape)
 
-Callables will have their return value passed back to the rendering function.
+Callables will have their return value passed back to the `render` function.
 
-If you want have a value not be escaped use `htmlelements.element.SafeStr`.
-It's just a wrapper for regular strings, but this is returned as is by
-the render function.
+If you want a value not be escaped use `htmlelements.element.SafeStr`.
+It's just a wrapper for regular strings, but it is returned as is by
+the `render` function.
 
 ```python
 >>> from htmlelements.element import SafeStr, render
@@ -92,14 +90,14 @@ the render function.
 '<p>sample</p>'
 ```
 
-## The utils module
+## The `utils` module
 
 The utils module has just two things for now: `doctype` and a function `html`
 
 The `doctype` is just the string `'<!doctype html>'`.
 
 The `html` function wraps a `Html` element class and returns it rendered as a
-string with the doctype prepended
+string with the `doctype` prepended
 
 ```python
 >>> from htmlelements.utils import html
@@ -107,7 +105,7 @@ string with the doctype prepended
 '<!doctype html><html>Other HTML elements go here</html>'
 ```
 
-## The classes: BaseElement, Element and VoidElement
+## The classes: `BaseElement`, `Element` and `VoidElement`
 
 Do not use these classes directly. Use them to create new classes!
 
@@ -133,33 +131,33 @@ If you want to create a void element:
 ```python
 >>> from htmlelements.element import VoidElement
 >>> class Img(VoidElement): ...
->>> str(Img("this is ignored", "also ignored"), src="img.png")
+>>> str(Img("this is ignored", "also ignored", src="img.png"))
 '<img src="img.png">'
 ```
 
-Both Element and VoidElement are convenience classes. All they do is remove the
-need to pass the `_void` keyword parameter to BaseElement
+Both `Element` and `VoidElement` are convenience classes. All they do is remove the
+need to pass the `_void` keyword parameter to `BaseElement`
 
 ```python
 >>> from htmlelements.element import BaseElement
 >>> class Img(BaseElement): ...
->>> str(Img("this is ignored", "also ignored"), src="img.png", _void=True)
+>>> str(Img("this is ignored", "also ignored", src="img.png", _void=True))
 '<img src="img.png">'
 ```
 
 That said, a bunch of elements are already available for importing, so no need
 to create your own Img class if you don't need any special behaviour
 
-## Element Children
+## `Element` Children
 
 Any non-keyword parameter passed is added as children.
 
-You can pass any object that has `__str__` implemented (and every Element
+You can pass any object that has `__str__` implemented (and every `Element`
 has `__str__`) or any callable that returns something that has `__str__`.
 
 ```python
 >>> from htmlelements import P, Span
->>> str(P("Hello", "World", 1.0 ,Span('SpanSpam')))
+>>> str(P("Hello", "World", 1.0, Span('SpanSpam')))
 '<p>HelloWorld1.0<span>SpanSpam</span></p>'
 ```
 
@@ -173,14 +171,14 @@ better to handle it before:
 '<p>Hello World 1.0<span>SpanSpam</span></p>'
 ```
 
-## Element attributes
+## `Element` attributes
 
 Any keyword parameter passed to the elements are added as attributes, with
 some caveats:
 
 - `_void` is used to control if the element should be a void element or not.
   This is only applicable when using `BaseElement` directly. `Element` and
-  `VoidElement` import handle this parameter automatically
+  `VoidElement` classes handle this parameter automatically
 - Some attributes are reserved keywords in python. So add an underscore
   at the end, like `class_`. Or you may want to use a dict expansion
 
@@ -190,16 +188,16 @@ fine, as well as any callable that returns a value with `__str__`.
 ```python
 >>> from htmlelements import P
 >>> l = [1, 2]
->>> str(P("Hello!", class_=l)
-'<p class="[1, 2]">Hello!</p>'
->>> str(P("Hello!", **{"class": l})
-'<p class="[1, 2]">Hello!</p>'
+>>> str(P("Hello!", class_=l))
+'<p class="1 2">Hello!</p>'
+>>> str(P("Hello!", **{"class": l}))
+'<p class="1 2">Hello!</p>'
 ```
 
 ```python
 >>> from htmlelements import Img, P
->>> str(Div("Hello!"), class_="font-bold bg-white text-black")
-'<div class="font-bold bg-white text-black">Hello</div>'
+>>> str(Div("Hello!", class_="font-bold bg-white text-black"))
+'<div class="font-bold bg-white text-black">Hello!</div>'
 ```
 
 Exception for `True` and `False`. Those two values will be converted to the
@@ -225,7 +223,6 @@ that shows a single article and an about page. All three using a
 common template.
 
 ```python
-
 from typing import NamedTuple
 from functools import cache
 
@@ -248,8 +245,10 @@ ARTICLES: list[Article] = [
 def get_articles():
     return ARTICLES
 
+
 def get_article(article_id: int):
     return next(a for a in ARTICLES if a.id == article_id)
+
 
 def template(*content, page_title=""):
     return html(
@@ -264,15 +263,17 @@ def template(*content, page_title=""):
         ),
     )
 
+
 def article(article_id: int):
     article = get_article(article_id)
     return template(
         H2(article.title),
         Div(
             *[P(paragraph) for paragraph in article.content.split("\n")],
-        )
+        ),
         page_title=article.title,
     )
+
 
 def home():
     return template(
@@ -296,14 +297,14 @@ See the @cache? Use it to avoid generating anything that won't change and/or
 are used with frequency! Just be careful when caching dynamic pages or you may
 end up serving stale data or, worse, leaking data.
 
-## Using with Django
+## Using with `Django`
 
-There's two ways: passing the elements to the django template or not using
-django templates at all
+There's two ways: passing the elements to the `django` template or not using
+`django` templates at all
 
-### With Django's template
+### With `Django`'s template
 
-This works because Element objects have `__str__` and can be rendered in the
+This works because `Element` objects have `__str__` and can be rendered in the
 template with just `{{ var }}`
 
 ```html
@@ -323,7 +324,7 @@ def view(request: HttpRequest):
   return render(request, "template.html", context)
 ```
 
-### Without Django's template
+### Without `Django`'s template
 
 ```python
 from htmlelements.utils import html
@@ -342,25 +343,25 @@ def view(request: HttpRequest) -> HttpResponse:
 
 ```
 
-Now if you want to use any Django template tag you will have to import them
+Now if you want to use any `Django` template tag you will have to import them
 and use them just like functions. Simple tags/filters are easy to use. Block
 tags may pose more of a challenge.
 
-### Django utilities
+### `Django` utilities
 
-Some things in Django are commonly handled by context processors and so
+Some things in `Django` are commonly handled by context processors and so
 depend on the template engine.
 
 One of those things is CSRF tokens.
 
 So there are two utilities in the `htmlelements.django` module to help with that.
 
-#### csrf_token
+#### `csrf_token`
 
 Just a wrapper around `django.middleware.csrf.get_token` that returns a
 function. Use as a callable to produce the token only when needed.
 
-This will required you to pass a HttpRequest object.
+This will require you to pass a HttpRequest object.
 
 ```python
 from django.http import HttpRequest, HttpResponse
@@ -388,12 +389,12 @@ def view(request: HttpRequest):
     )
 ```
 
-#### csrf_input
+#### `csrf_input`
 
 Given that you will most likely want to add the CSRF token as a hidden input, this
 does just that.
 
-Just like the csrf_token this will required the HttpRequest object.
+Just like the `csrf_token` this will require the HttpRequest object.
 
 The code above is equivalent to:
 
