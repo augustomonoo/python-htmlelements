@@ -1,9 +1,12 @@
+from typing import Any
+
 from . import Html
+from .element import AnyRenderable
 
 doctype = "<!doctype html>"
 
 
-def html(*contents, **attributes):
+def html(*contents: AnyRenderable, **attributes: AnyRenderable) -> str:
     """Renders all passed content inside a Html element.
 
     Also inserts a doctype tag at the start of the rendered string

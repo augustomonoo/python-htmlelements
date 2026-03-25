@@ -17,6 +17,8 @@ def csrf_token(request: HttpRequest) -> Callable[[], str]:
     return csrf
 
 
-def csrf_input(request: HttpRequest, type="hidden", name="csrfmiddlewaretoken"):
+def csrf_input(
+    request: HttpRequest, type: str = "hidden", name: str = "csrfmiddlewaretoken"
+) -> Input:
     """A Input[type='hidden'] element with django's csrf_token"""
     return Input(value=csrf_token(request), type=type, name=name)
