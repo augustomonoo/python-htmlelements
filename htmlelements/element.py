@@ -79,14 +79,16 @@ class BaseElement:
 
     def __init__(
         self,
-        *content: "AnyRenderable",
+        *_content: "AnyRenderable",
         _void=False,
-        **attributes: "AnyRenderable",
+        **_attributes: "AnyRenderable",
     ):
         self.tag = parse_attribute_tag(self.__class__.__name__)
         self._void = _void
-        self.content = [] if self._void else list(content)
-        self.other_attrs = {parse_attribute_tag(k): v for k, v in attributes.items()}
+        self.content = [] if self._void else list(_content)
+        self.other_attrs = {
+            parse_attribute_tag(k): v for k, v in _attributes.items()
+        }
 
     def render_attributes(self):
         """Build a string containing all the tag and all of it's attributes.
@@ -129,8 +131,8 @@ class Element(BaseElement):
     It's just a wrapper to remove the _void parameter from __init__
     """
 
-    def __init__(self, *content: "AnyRenderable", **attributes: "AnyRenderable"):
-        super().__init__(*content, _void=False, **attributes)
+    def __init__(self, *_content: "AnyRenderable", **_attributes: "AnyRenderable"):
+        super().__init__(*_content, _void=False, **_attributes)
 
 
 class VoidElement(BaseElement):
@@ -139,8 +141,8 @@ class VoidElement(BaseElement):
     Similar to Element, but this also ignores anything passed as content
     """
 
-    def __init__(self, *content: "AnyRenderable", **attributes: "AnyRenderable"):
-        super().__init__(_void=True, **attributes)
+    def __init__(self, *_content: "AnyRenderable", **_attributes: "AnyRenderable"):
+        super().__init__(_void=True, **_attributes)
 
 
 Renderable = str | SafeStr | bool | BaseElement | Iterable | Any
