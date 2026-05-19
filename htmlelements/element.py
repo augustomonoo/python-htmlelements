@@ -113,7 +113,7 @@ class BaseElement:
         """Renders the element into a string
 
         If the element is void, the rendered string will be something like
-        <img src="a url"/>
+        <img src="a url">
 
         While a non void element will be
         <button id="myId" class="btn">Click</button>
