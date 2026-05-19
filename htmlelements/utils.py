@@ -1,7 +1,7 @@
 from . import Html
-from .element import AnyRenderable
+from .element import AnyRenderable, SafeStr
 
-doctype = "<!doctype html>"
+DOCTYPE_HTML = SafeStr("<!doctype html>")
 
 
 def html(*contents: AnyRenderable, **attributes: AnyRenderable) -> str:
@@ -12,4 +12,4 @@ def html(*contents: AnyRenderable, **attributes: AnyRenderable) -> str:
     >>> html()
     <!doctype html><html></html>
     """
-    return doctype + str(Html(*contents, **attributes))
+    return f"{DOCTYPE_HTML}{Html(*contents, **attributes)}"
