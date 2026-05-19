@@ -92,9 +92,9 @@ the `render` function.
 
 ## The `utils` module
 
-The utils module has just two things for now: `doctype` and a function `html`
+The utils module has just two things for now: `DOCTYPE_HTML` and a function `html`
 
-The `doctype` is just the string `'<!doctype html>'`.
+The `DOCTYPE_HTML` is just a `SafeStr` containing `'<!doctype html>'`.
 
 The `html` function wraps a `Html` element class and returns it rendered as a
 string with the `doctype` prepended
