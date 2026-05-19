@@ -1,5 +1,3 @@
-from typing import Any
-
 from . import Html
 from .element import AnyRenderable
 
