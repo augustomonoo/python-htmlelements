@@ -195,16 +195,33 @@ fine, as well as any callable that returns a value with `__str__`.
 ```
 
 ```python
->>> from htmlelements import Img, P
+>>> from htmlelements import Div
 >>> str(Div("Hello!", class_="font-bold bg-white text-black"))
 '<div class="font-bold bg-white text-black">Hello!</div>'
 ```
 
-Exception for `True` and `False`. Those two values will be converted to the
-strings `'true'` and `'false'` (note the lowercase there). If you need them
-to remain uppercase turn them into strings before.
+For `True`, `False` and `None` the treatment is special during the
+rendering, after callables are resolved:
 
-If you do no want to use keyword arguments a `dict` can be used instead:
+`True` will cause the attribute to be rendered without value
+
+```python
+>>> from htmlelements import Button
+>>> str(Button(disabled=True))
+'<button disabled></button>'
+```
+
+While `False` and `None` will cause the attribute to be omited
+
+```python
+>>> from htmlelements import Button
+>>> str(Button(disabled=False))
+'<button></button>'
+>>> str(Button(disabled=None))
+'<button></button>'
+```
+
+If you do not want to use keyword arguments a `dict` can be used instead:
 
 ```python
 >>> from htmlelements import P

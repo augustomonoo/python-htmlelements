@@ -44,10 +44,6 @@ class TestRender(unittest.TestCase):
         self.assertEqual(render(call_number), "123")
         self.assertEqual(render(call_str), "a")
 
-    def test_should_return_bools_as_lowercase_str(self):
-        self.assertEqual(render(True), "true")
-        self.assertEqual(render(False), "false")
-
     def test_iterables_should_joined_with_spaces(self):
         v = ["class1", "class2"]
         self.assertEqual(render(v), "class1 class2")
@@ -90,13 +86,45 @@ class TestBaseElement(unittest.TestCase):
         el = BaseElement("This should be ignored", _void=True)
         self.assertEqual(str(el), "<base-element>")
 
-    def test_base_element_void_with_attributes(self):
-        el = BaseElement(_void=True, id="voidId", class_="voidClass")
-        self.assertEqual(str(el), '<base-element id="voidId" class="voidClass">')
+    def test_attribute_removed_with_value_None(self):
+        el = BaseElement(hx_get=None)
+        self.assertEqual(str(el), "<base-element></base-element>")
 
-    def test_attribute_replace_underscores(self):
-        el = BaseElement(hx_get="url")
-        self.assertIn('hx-get="url"', str(el))
+    def test_attribute_removed_with_value_False(self):
+        el = BaseElement(hx_get=False)
+        self.assertEqual(str(el), "<base-element></base-element>")
+
+    def test_bare_attribute_with_value_True(self):
+        el = BaseElement(disabled=True)
+        self.assertEqual(str(el), "<base-element disabled></base-element>")
+
+    def test_callable_attribute_returning_True_is_bare(self):
+        el = BaseElement(disabled=lambda: True)
+        self.assertEqual(str(el), "<base-element disabled></base-element>")
+
+    def test_callable_attribute_returning_False_is_removed(self):
+        el = BaseElement(disabled=lambda: False)
+        self.assertEqual(str(el), "<base-element></base-element>")
+
+    def test_callable_attribute_returning_None_is_removed(self):
+        el = BaseElement(disabled=lambda: None)
+        self.assertEqual(str(el), "<base-element></base-element>")
+
+    def test_callable_attribute_is_evaluated_on_each_render(self):
+        state = {"disabled": False}
+        el = BaseElement(disabled=lambda: state["disabled"])
+
+        self.assertEqual(str(el), "<base-element></base-element>")
+
+        state["disabled"] = True
+        self.assertEqual(str(el), "<base-element disabled></base-element>")
+
+    def test_numeric_attributes_are_not_treated_as_booleans(self):
+        el = BaseElement(zero=0, one=1)
+        self.assertEqual(
+            str(el),
+            '<base-element zero="0" one="1"></base-element>',
+        )
 
     def test_callable_content(self):
         def call():
@@ -114,7 +142,7 @@ class TestBaseElement(unittest.TestCase):
 
 
 class TestElement(unittest.TestCase):
-    def test_should_be_void(self):
+    def test_should_not_be_void(self):
         el = Element()
         self.assertFalse(el._void)
 

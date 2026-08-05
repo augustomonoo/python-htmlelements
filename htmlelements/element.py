@@ -23,16 +23,13 @@ def render(value: "AnyRenderable") -> str | SafeStr:
     If value is a Callable will call render on the result of the call.
 
     If it's SafeStr it will be returned as is
-
-    Booleans are returned as a lowercase str (True => 'true').
-
     """
     if callable(value):
         return render(value())
     if isinstance(value, SafeStr):
         return value
     if isinstance(value, bool):
-        return str(value).lower()
+        return str(value)
     if isinstance(value, BaseElement):
         return str(value)
     if isinstance(value, str):
@@ -86,9 +83,7 @@ class BaseElement:
         self.tag = parse_attribute_tag(self.__class__.__name__)
         self._void = _void
         self.content = [] if self._void else list(_content)
-        self.other_attrs = {
-            parse_attribute_tag(k): v for k, v in _attributes.items()
-        }
+        self.attributes = _attributes
 
     def render_attributes(self):
         """Build a string containing all the tag and all of it's attributes.
@@ -104,9 +99,16 @@ class BaseElement:
         If you call this method directly it's up to you to wrap it in <>
         (maybe with f"<{obj.build_attrs()}>")
         """
-        attrs = [self.tag] + [
-            f'{key}="{render(value)}"' for key, value in self.other_attrs.items()
-        ]
+        attrs = [self.tag]
+        for key, value in self.attributes.items():
+            parsed_key = parse_attribute_tag(key)
+            while callable(value):
+                value = value()
+
+            if value is True:
+                attrs.append(parsed_key)
+            elif value is not False and value is not None:
+                attrs.append(f'{parsed_key}="{render(value)}"')
         return " ".join(attrs)
 
     def __str__(self):
