@@ -7,7 +7,7 @@ Deprecation messages also taken from the MDN, with some minor adjustments
 """
 
 from warnings import deprecated
-from htmlelements.element import Element, VoidElement
+from htmlelements.element import Element as Element, VoidElement as VoidElement
 
 
 class H1(Element): ...

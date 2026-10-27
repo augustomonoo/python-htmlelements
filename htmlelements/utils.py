@@ -1,5 +1,5 @@
 from . import Html
-from .element import AnyRenderable, SafeStr
+from .element import AnyRenderable as AnyRenderable, SafeStr as SafeStr
 
 DOCTYPE_HTML = SafeStr("<!doctype html>")
 
